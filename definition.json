@@ -1,0 +1,37 @@
+{
+  "name": "files",
+  "serve": [
+    {
+      "name": "raw",
+      "title": "Get raw file",
+      "description": "",
+      "returntype": "download",
+      "namespace": "",
+      "args": []
+    },
+    {
+      "name": "file",
+      "title": "Get file information",
+      "description": "",
+      "returntype": "object",
+      "namespace": "",
+      "args": []
+    },
+    {
+      "name": "upload",
+      "title": "Upload",
+      "description": "",
+      "returntype": "object",
+      "namespace": "",
+      "args": []
+    },
+    {
+      "name": "reindex",
+      "title": "Reindex",
+      "description": "",
+      "returntype": "boolean",
+      "namespace": "",
+      "args": []
+    }
+  ]
+}
