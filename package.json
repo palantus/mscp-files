@@ -1,11 +1,14 @@
 {
-	"name": "files",
-	"version": "1.0.0",
-	"main" : "main.js",
-	"dependencies" : {
-    "guid" : "*",
-    "moment" : "*",
-    "mscp" : "*",
-    "mscp-accesstokens": "*"
-  }
+ "name": "files",
+ "version": "1.0.0",
+ "main": "main.js",
+ "dependencies": {
+  "guid": "*",
+  "moment": "*",
+  "mscp": "*",
+  "mscp-accesstokens": "*",
+  "md5-file": "*",
+  "md5": "*",
+  "mime-types": "*"
+ }
 }

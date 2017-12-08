@@ -5,9 +5,17 @@
       "name": "raw",
       "title": "Get raw file",
       "description": "",
-      "returntype": "download",
+      "returntype": "custom",
       "namespace": "",
-      "args": []
+      "args": [
+        {
+          "name": "hash",
+          "title": "Hash",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ]
     },
     {
       "name": "file",
@@ -15,21 +23,77 @@
       "description": "",
       "returntype": "object",
       "namespace": "",
-      "args": []
+      "args": [
+        {
+          "name": "hash",
+          "title": "",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ]
     },
     {
       "name": "upload",
-      "title": "Upload",
+      "title": "Upload file",
       "description": "",
-      "returntype": "object",
+      "returntype": "string",
       "namespace": "",
-      "args": []
+      "args": [
+        {
+          "name": "path",
+          "title": "Path",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ]
     },
     {
       "name": "reindex",
       "title": "Reindex",
       "description": "",
       "returntype": "boolean",
+      "namespace": "",
+      "args": []
+    },
+    {
+      "name": "folder",
+      "title": "Folder",
+      "description": "",
+      "returntype": "object",
+      "namespace": "",
+      "args": [
+        {
+          "name": "hash",
+          "title": "",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "download",
+      "title": "Download file",
+      "description": "",
+      "returntype": "download",
+      "namespace": "",
+      "args": [
+        {
+          "name": "hash",
+          "title": "",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "diagnostics",
+      "title": "Diagnostics",
+      "description": "",
+      "returntype": "object",
       "namespace": "",
       "args": []
     }
