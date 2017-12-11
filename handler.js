@@ -202,14 +202,6 @@ class Handler{
     return await getFiles(path)
   }
 
-  async uploadNew(filename, size, parts){
-
-  }
-
-  async uploadPart(part, content){
-
-  }
-
   async upload(path){
     let files = []
     for(let filedef in this.request.req.files){
