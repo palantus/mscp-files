@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+	<title>Files</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=10,IE=9,IE=8,IE=edge" />
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+
+	<link rel="icon" sizes="48x48" href="/img/collections.png">
+	<link rel="apple-touch-icon" sizes="442x442" href="/mscp/libs/img/document.png" />
+
+  <link rel="stylesheet" type="text/css" href="/css/files.css" />
+  <link rel="stylesheet" type="text/css" href="/css/loader.css" />
+
+	<script src="/mscp/libs/js/jquery.min.js"></script>
+	<script src="/mscp/js/browser.js"></script>
+	<script src="/js/files.js"></script>
+	<script src="/js/typehandler.js"></script>
+	<script src="/js/properties.js"></script>
+	<script src="/js/filepicker.js"></script>
+	<script src="/js/md5.js"></script>
+	<script src="/js/upload.js"></script>
+</head>
+<body>
+<div id="content-wrapper">
+  <div id="loading">
+    <div>
+      <div class="loader"></div>
+    </div>
+  </div>
+  <div id="content" class="hidden"></div>
+  <div id="filepicker" class="popup hidden">
+    <div>
+      <button id="filepicker-ok" disabled>Ok</button>
+      <button id="filepicker-cancel">Cancel</button>
+      <button id="filepicker-up" disabled>Up</button>
+      <span id="filepicker-path"/>
+      <ul id="filepicker-items" class="foldercontent"/>
+    </div>
+  </div>
+</div>
+</body>
+</html>

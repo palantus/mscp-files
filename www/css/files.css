@@ -1,0 +1,75 @@
+html{background: #ebebeb url('/img/bkg.jpg') left top repeat;}
+body,html{ /*background-color: #eee; */font-family: Roboto,sans-serif; -webkit-font-smoothing: antialiased; margin: 0px;}
+
+#content,#loading,#login{visibility: visible; transition: visibility 0.2s linear, opacity 0.2s linear; }
+
+#content{}
+#loading{position: fixed; left:0; top: 0; height: 100%; width: 100%;}
+#loading > div{position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);}
+#login{position: fixed; left:0; top: 0; height: 100%; width: 100%; background-color: #222;}
+#login > div{position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+#login > div *{display: block;}
+#login > div input{margin-bottom: 3px; font-size: 120%;}
+#login > div button{margin-top: 5px; }
+
+#content.hidden,#loading.hidden,#login.hidden{visibility: hidden; opacity: 0;}
+
+
+/* Full screen popups */
+div.popup{z-index: 5; visibility: visible; transition: visibility 0.2s linear, opacity 0.2s linear; position: fixed; left:0; top: 0; height: 100%; width: 100%; background-color: #222; opacity: 0.9;}
+div.popup > div{position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(230, 230, 230, 0.9); padding: 5px; border-radius: 10px;}
+div.popup > div input{margin-bottom: 3px; font-size: 120%;}
+div.popup > div button{margin-top: 5px; }
+div.popup.hidden{visibility: hidden; opacity: 0;}
+
+/* Toolbar */
+div.toolbar{/*background-color: #eee;*/ padding: 5px; /*box-shadow: 0px 5px 14px 0px #888888*/}
+div.toolbar .toolbarbutton{position: relative;}
+div.toolbar .toolbarbutton .dropdownmenu{display: none;}
+div.toolbar .toolbarbutton.open .dropdownmenu{display: block;}
+div.toolbar .toolbarbutton.open > button{box-shadow: inset 1px 1px 11px 0px #7b7b7b}
+
+.dropdownmenu{z-index: 2; color: white; position:absolute; background-color: gray; background-color: #222; opacity: 0.9; box-shadow: 0px 2px 3px 0px #888888; left: 0px; padding: 15px; border-radius: 0px 10px 10px 10px;}
+.dropdownmenu > input, .dropdownmenu > button, .dropdownmenu > label{margin-top: 5px; margin-bottom: 5px;}
+.dropdownmenu > * {width: 200px}
+.dropdownmenu > input {width: 192px;}
+.dropdownmenu > label {display: inline-block}
+.dropdownmenu .smallbutton{margin-right: 10px; cursor: pointer;}
+.dropdownmenu .smallbutton:hover{text-decoration: underline;}
+
+/* Generic styling */
+select{border: 1px solid #ccc; width: 120px; border-radius: 3px; overflow: hidden; background: #fafafa; padding: 3px;}
+input[type=text],input[type=password]{border: 1px solid #ccc; border-radius: 3px; overflow: hidden; background: #fafafa; padding:3px;}
+/*
+button {background: #eee; background-image: linear-gradient(to bottom, #eee, #ddd); border-radius: 7px; font: 14px Roboto,sans-serif; color: #000; font-size: 15px; padding: 3px 10px 3px 10px; text-decoration: none; border: none; min-width: 70px; outline: none; box-shadow: 1px 1px 11px 0px #7b7b7b;}
+button:enabled:hover {background: #ccc; background-image: linear-gradient(to bottom, #ccc, #eee); text-decoration: none; cursor: pointer; }
+button:disabled{background: #ddd; color: gray;}
+*/
+button {background: #575757; background-image: linear-gradient(to bottom, #575757, #000000); border-radius: 5px; font: 14px Roboto,sans-serif; color: #ffffff; font-size: 15px; padding: 5px 10px 5px 10px; text-decoration: none; border: none; min-width: 70px; outline: none;}
+button:enabled:hover {background: #000000; background-image: linear-gradient(to bottom, #000000, #000000); text-decoration: none; cursor: pointer;}
+button:disabled{background: #272727; color: gray;}
+
+
+span.backbutton{border: 1px solid black; cursor: pointer; padding: 5px;}
+
+div.folderview > div{position: relative;}
+li.folderitem{ height: 15px; padding: 3px;transition: background 0.2s linear; position: relative; user-select: none; cursor: pointer;}
+li.folderitem:hover, li.folderitem.selected{background: rgba(230, 230, 230, 0.5);}
+li.folderitem .itemname{cursor:pointer; margin-right: 5px; /*min-width: 200px;*/ display: inline-block; position: absolute; top: 0px; padding-top: 2px; padding-right: 5px;}
+li.folderitem .itemactions{left: 200px; position: absolute; background-color: inherit; padding-left: 10px; padding-right: 10px;}
+li.folderitem .itemaction{ visibility: hidden;}
+li.folderitem .itemaction img{cursor:pointer;}
+li.folderitem:hover .itemaction, li.folderitem .itemaction.clicked, li.folderitem.selected .itemaction{visibility: visible; position:relative;}
+
+li.folderitem .itemaction .dropdownmenu{display: none;}
+li.folderitem .itemaction.clicked .dropdownmenu{display: block;}
+
+ul.foldercontent{list-style-type: none; padding-left: 10px; padding-top: 5px; margin-top: 0px;}
+ul.foldercontent .folderitem img{height: 15px; padding-right: 5px;}
+
+
+/* Properties */
+div.itempropertiescontainer{position: absolute; right: 0px; top: 0px; background-color: #222; color: white; min-width: 150px; display: none; opacity: 0.9; border-radius: 5px 0px 0px 5px; box-shadow: -1px 1px 13px 0px #5d5656;}
+div.itempropertiescontainer > p.header{padding: 3px 6px; border-bottom: 1px solid #eee; margin: 0px 0px 5px 0px;}
+div.itempropertiescontainer > p.header:not(:first-of-type){border-top: 1px solid #eee;}
+div.itempropertiescontainer > table{padding-left: 6px; margin-bottom: 5px; font-size: 75%;}

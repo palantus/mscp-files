@@ -41,8 +41,8 @@
       "namespace": "",
       "args": [
         {
-          "name": "path",
-          "title": "Path",
+          "name": "folder",
+          "title": "Folder",
           "type": "string",
           "required": true,
           "description": ""
@@ -96,6 +96,148 @@
       "returntype": "object",
       "namespace": "",
       "args": []
+    },
+    {
+      "name": "delete",
+      "title": "Delete",
+      "description": "",
+      "returntype": "boolean",
+      "namespace": "",
+      "default": "",
+      "args": [
+        {
+          "name": "id",
+          "title": "Id",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "addTag",
+      "args": [
+        {
+          "name": "id",
+          "title": "",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "name": "tag",
+          "title": "",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "returntype": "array",
+      "title": "Add Tag",
+      "namespace": "meta"
+    },
+    {
+      "name": "findMulti",
+      "title": "Find using multiple queries",
+      "description": "",
+      "returntype": "array",
+      "namespace": "meta",
+      "default": "",
+      "args": [
+        {
+          "name": "queries",
+          "title": "Queries",
+          "type": "array",
+          "required": true,
+          "description": ""
+        },
+        {
+          "name": "fillMetadata",
+          "title": "Fill metadata",
+          "type": "boolean",
+          "required": false,
+          "description": ""
+        }
+      ]
+    },
+    {
+      "name": "setProperty",
+      "title": "Set property",
+      "description": "",
+      "returntype": "object",
+      "args": [
+        {
+          "name": "id",
+          "title": "Id",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "name": "prop",
+          "title": "Property",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "name": "value",
+          "title": "Value",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "namespace": "meta"
+    },
+    {
+      "name": "find",
+      "title": "Find",
+      "description": "",
+      "returntype": "array",
+      "args": [
+        {
+          "name": "query",
+          "title": "Query",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "name": "fillMetadata",
+          "title": "Fill metadata",
+          "type": "boolean",
+          "required": false,
+          "description": ""
+        }
+      ],
+      "namespace": "meta"
+    },
+    {
+      "name": "removeTag",
+      "args": [
+        {
+          "name": "id",
+          "title": "",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "name": "tag",
+          "title": "",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ],
+      "description": "",
+      "returntype": "array",
+      "title": "Remove tag from id",
+      "namespace": "meta"
     }
   ]
 }
