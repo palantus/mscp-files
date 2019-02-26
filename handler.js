@@ -160,7 +160,7 @@ class Handler{
   }
 
   async download(hash){
-    let file = (await this.mscp.meta.find(`id:"${hash}"|prop:"hash="${hash}"`, true))[0]
+    let file = (await this.mscp.meta.find(`id:"${hash}"|prop:"hash=${hash}"`, true))[0]
 
     if(!file)
       throw "Unknown file"
