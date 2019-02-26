@@ -170,7 +170,7 @@ class Handler{
     if(!isFile)
       throw `${hash} is a directory`
 
-    return {name: this.global.hashToFilename[hash], path: filename}
+    return {name: file.properties.name, path: filename}
   }
 
   async raw(hash){
