@@ -171,12 +171,14 @@ class Handler{
         let response = await request(source.exists.replace("$hash$", hash))
         if(response){
           let res = JSON.parse(response);
-          if(res.success == true){
+          if(res.success == true && res.result == true){
             this.request.res.redirect(source.download.replace("$hash$", hash))
+            return true;
           }
         }
       }
     }
+    return false;
   }
 
   async download(hash){
@@ -190,9 +192,9 @@ class Handler{
 
       return {name: file.properties.name, path: filename}
     } else {
-      let filename = await this.tryExternalFileSources(hash)
-      if(filename){
-        return {name: path.basename(filename), path: filename}
+      let handled = await this.tryExternalFileSources(hash)
+      if(handled){
+        return;
       }
     }
     throw "Unknown file"
