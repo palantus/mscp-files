@@ -318,7 +318,7 @@ class Handler{
   }
 
   async upload(folderIdOrPath){
-    console.log("Upload: " + folderIdOrPath)
+    //console.log("Upload: " + folderIdOrPath)
     let folder = await this.folder(folderIdOrPath)
     let files = []
     let realPath = this.virtualPathToReal(folder.path)
@@ -342,6 +342,22 @@ class Handler{
       ret.push(await this.file(md5(f)))
     }
     return ret
+  }
+
+  async addFolder(path, name){
+    let folder = await this.folder(path)
+    let realPath = this.virtualPathToReal(folder.path)
+    let folderExists = await new Promise((r) => fs.access(realPath, fs.constants.R_OK | fs.constants.W_OK, (err) => r(err?false:true)))
+    if(!realPath || !folderExists)
+      throw `The folder "${realPath}" doesn't exist`
+
+    let newFullPath = resolve(realPath, name);
+
+    console.log(`New folder: ${newFullPath}`)
+    await new Promise((r) => fs.mkdir(newFullPath, (err) => r()))
+
+    await this.reindex(); //TODO: nok for ineffektivt
+    return true;
   }
 
   async delete(id){

@@ -126,7 +126,7 @@ class FolderView{
     this.element.find(".toolbarbutton > button").click((e) => {
       let isOpen = $(e.target).parent().is(".open")
       this.element.find(".toolbarbutton").removeClass("open")
-      $(e.target).parent().toggleClass('open', !isOpen).find('select').focus().val('folder');
+      $(e.target).parent().toggleClass('open', !isOpen).find('input').focus();
       e.stopPropagation();
     })
     this.element.find("button.backbutton").click((e) => this.back($(e.target)))
@@ -152,7 +152,7 @@ class FolderView{
     let folder = await mscp.folder(id);
     this.path.push(folder)
     this.element.find(".backbutton").prop("disabled",this.path.length == 1)
-    this.element.find("span.folderpath").html(this.path.map((p) => p.title).join("/") || "/")
+    this.element.find("span.folderpath").html(this.path.map((p) => p.name).join("/") || "/")
 
     await this.refreshContent(folder);
   }

@@ -19,15 +19,15 @@ class TypeHandler{
   }
 
   async addNewExecute(e){
-    let typeInput = e.parent().find("select[name=type]")
     let titleInput = e.parent().find("input[name=title]")
-    await mscp.add(this.folderView.folder.id, typeInput.val(), titleInput.val())
+    await mscp.addFolder(this.folderView.folder.id, titleInput.val())
     this.folderView.refreshContent()
     e.parents(".toolbarbutton").removeClass("open")
     typeInput.val("folder")
     titleInput.val("")
   }
 
+  /*
   async addExistingExecute(e){
     let typeInput = e.parent().find("select[name=type]")
     let titleInput = e.parent().find("input[name=title]")
@@ -39,6 +39,7 @@ class TypeHandler{
     titleInput.val("")
     identifierInput.val("")
   }
+  */
 
   async openItem(item, e){
     e = e || {}

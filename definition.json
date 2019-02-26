@@ -113,6 +113,30 @@
           "description": ""
         }
       ]
+    },
+    {
+      "name": "addFolder",
+      "title": "Add Folder",
+      "description": "",
+      "returntype": "boolean",
+      "namespace": "",
+      "default": "",
+      "args": [
+        {
+          "name": "path",
+          "title": "Path",
+          "type": "string",
+          "required": true,
+          "description": ""
+        },
+        {
+          "name": "name",
+          "title": "Name",
+          "type": "string",
+          "required": true,
+          "description": ""
+        }
+      ]
     }
   ],
   "dependencies": [
