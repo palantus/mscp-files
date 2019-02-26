@@ -23,6 +23,8 @@ class Entity{
     await mscp.ready;
 
     $("#content").removeClass("hidden")
+    let urlParts = window.location.href.split("/")
+    let baseURL = urlParts[0] + "//" + urlParts[2]
     this.types = {
       "folder": {
         title: "Folder",
@@ -31,10 +33,11 @@ class Entity{
       "file": {
         title: "File",
         icon: "/mscp/libs/img/document.png",
+        allowShare: true,
         open: {
           type: "url",
           dest: "window",
-          url: "/api/raw/$id$/$name$",
+          url: baseURL + "/api/raw/$id$/$name$",
           includeAccessToken: false,
           windowWidth: 700
         }
@@ -261,8 +264,8 @@ class FolderView{
         let shareActionHTML = `<span class="itemaction" title="Share">
                                   <img src="/mscp/libs/img/share.png"/>
                                   <span class="confirm dropdownmenu">
-                                    <label><input type="checkbox" name="writeaccess"/>Write access</label>
-                                    <label><input type="checkbox" name="permanentaccess"/>Permanent access</label>
+                                    <!--<label><input type="checkbox" name="writeaccess"/>Write access</label>-->
+                                    <!--<label><input type="checkbox" name="permanentaccess"/>Permanent access</label>-->
                                     <input style="display: none;" type="text" name="generatedlink"/>
                                     <span class="smallbutton generate">Generate</span>
                                     <span class="smallbutton cancel">Close</span>
@@ -271,8 +274,8 @@ class FolderView{
 
         let shareAction = $(shareActionHTML)
         shareAction.find(".generate").click(async (e) => {
-          let writeAccess = $(e.target).parents(".folderitem").find("input[name=writeaccess]").is(":checked")
-          let permanentAccess = $(e.target).parents(".folderitem").find("input[name=permanentaccess]").is(":checked")
+          let writeAccess = true//$(e.target).parents(".folderitem").find("input[name=writeaccess]").is(":checked")
+          let permanentAccess = true//$(e.target).parents(".folderitem").find("input[name=permanentaccess]").is(":checked")
           $(e.target).parents(".folderitem").find("input[name=generatedlink]").val(await this.itemShare($(e.target).parents(".folderitem").data("item"), writeAccess, permanentAccess)).show().focus().select();
           e.stopPropagation();
         })

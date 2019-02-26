@@ -248,6 +248,14 @@ class Handler{
       throw "Unknown folder: " + hashOrPath
 
     let folderContent = await this.mscp.meta.find("prop:parentpath=" + folder.properties.path + " !tag:deleted", true)
+    for(let i = folderContent.length - 1; i >= 0; i--){
+      let filename = this.virtualPathToReal(folderContent[i].properties.path);
+      let exists = await new Promise(resolve => fs.stat(filename, (err, stat) => resolve(err == null ? true : false)))
+      if(!exists){
+        this.mscp.meta.addTag(folderContent[i].id, "deleted")
+        folderContent.splice(i, 1)
+      }
+    }
 
     return {
       name: folder.properties.name,
@@ -330,9 +338,11 @@ class Handler{
       throw `The folder "${realPath}" doesn't exist`
 
     for(let filedef in this.request.req.files){
-      let file = this.request.req.files[filedef]
-      file.mv(realPath + "/" + file.name)
-      files.push(this.realPathToVirtual(realPath + "/" + file.name))
+      let file = Array.isArray(this.request.req.files[filedef]) ? this.request.req.files[filedef] : [this.request.req.files[filedef]]
+      for(let f of file){
+        f.mv(realPath + "/" + f.name)
+        files.push(this.realPathToVirtual(realPath + "/" + f.name))
+      }
     }
 
     await this.reindex(); //TODO: nok for ineffektivt

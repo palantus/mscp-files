@@ -24,7 +24,6 @@ class TypeHandler{
     titleInput.val("")
     this.folderView.refreshContent()
     e.parents(".toolbarbutton").removeClass("open")
-    typeInput.val("folder")
     titleInput.val("")
   }
 
