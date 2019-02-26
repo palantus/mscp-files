@@ -131,6 +131,8 @@ class Handler{
         console.log(vPath)
       }
     }
+
+    this.fillMissingHashes();
     /*
     async function getFiles(dir) {
       const subdirs = await readdir(dir);
@@ -145,8 +147,20 @@ class Handler{
     */
   }
 
+  async fillMissingHashes(){
+    let files = (await this.mscp.meta.find(`prop:type=file prop:hash= !tag:deleted`, true))
+    for(let file of files){
+        let filename = this.virtualPathToReal(file.properties.path);
+        let hash = await md5File(filename)
+        if(hash) {
+          this.mscp.meta.setProperty(file.id, "hash", hash)
+          console.log(`Filled hash of file: ` + file.properties.path)
+        }
+    }
+  }
+
   async download(hash){
-    let file = (await this.mscp.meta.find(`id:${hash}`, true))[0]
+    let file = (await this.mscp.meta.find(`id:"${hash}"|prop:hash="${hash}"`, true))[0]
 
     if(!file)
       throw "Unknown file"
@@ -160,7 +174,7 @@ class Handler{
   }
 
   async raw(hash){
-    let file = (await this.mscp.meta.find(`id:${hash}`, true))[0]
+    let file = (await this.mscp.meta.find(`id:"${hash}"|prop:hash="${hash}"`, true))[0]
 
     if(!file)
       throw "Unknown file"
@@ -200,45 +214,7 @@ class Handler{
 
   async folder(hashOrPath){
     let folder = null;
-    /*
-    if(!hashOrPath || hashOrPath == "/"){
-      let content = []
-      let i = -1;
-      for(let f in this.global.setup.folders){
-        content.push({
-          id: i,
-          properties: {
-            name: f,
-            parentpath: "/",
-            path: `/${f}`,
-            type: "folder"
-          },
-          tags: [],
-          relations: []
-        })
-        i--;
-      }
-      return {
-        id: 0,
-        name: "root",
-        parentPath: null,
-        path: "/",
-        content: content,
-        links: {
-          parent: null,
-          self: `${this.global.setup.baseurl}/api/folder/?path=/`
-        }
-      }
-    } else if(this.global.setup.folders[hashOrPath.substr(1)] !== undefined){
-      folder = {
-        id: 0,
-        properties: {
-          path: hashOrPath,
-          parentpath: "/",
-          type: "folder"
-        }
-      }
-    } else */if(hashOrPath.length == 32 && hashOrPath.indexOf("/") < 0){ //hash
+    if(hashOrPath.length == 32 && hashOrPath.indexOf("/") < 0){ //hash
       folder = (await this.mscp.meta.find("id:"+hashOrPath, true))[0];
     } else {
       folder = (await this.mscp.meta.find('prop:path=' + hashOrPath, true))[0];
@@ -268,62 +244,6 @@ class Handler{
         self: `${this.global.setup.baseurl}/api/folder/?path=${folder.properties.path}`
       }
     }
-
-
-    /*
-    let hash = "";
-    if(this.global.hashToPath[hashOrPath])
-      hash = hashOrPath
-    else {
-      hash = hashOrPath.startsWith("/") ? md5(hashOrPath) : md5("/"+hashOrPath)
-
-      if(this.global.hashToPath[hash] === undefined)
-        throw "Unknown folder: " + hashOrPath
-    }
-
-    hash = hash || md5("")
-
-    let files = []
-    let folders = []
-
-    for(let fhash of this.global.hashToSubFiles[hash] || []){
-      files.push({filename: this.global.hashToFilename[fhash], hash: fhash, link: `${this.global.setup.baseurl}/api/file/${fhash}/${this.global.hashToFilename[fhash]}`})
-    }
-    for(let fhash of this.global.hashToSubFolders[hash] || []){
-      folders.push({filename: this.global.hashToFilename[fhash], hash: fhash, link: `${this.global.setup.baseurl}/api/folder/${fhash}/${this.global.hashToFilename[fhash]}`})
-    }
-
-    let name = this.global.hashToFilename[hash];
-    let parentHash = this.global.hashToParentFolder[hash];
-    let parentName = this.global.hashToFilename[parentHash];
-
-    return {
-      name: name,
-      id: hash,
-      parentHash: this.global.hashToParentFolder[hash],
-      path: this.global.hashToPath[hash],
-      files: files,
-      folders: folders,
-      links: {
-        parent: parentHash ? `${this.global.setup.baseurl}/api/folder/${parentHash}/${parentName}` : null,
-        self: `${this.global.setup.baseurl}/api/folder/${hash}/${name}`
-      }
-    }
-    */
-  }
-
-  async diagnostics(){ //TODO: remove
-    return {
-      hashToPath: this.global.hashToPath,
-      hashToSubFiles: this.global.hashToSubFiles,
-      hashToFilename: this.global.hashToFilename,
-      hashToSubFolders: this.global.hashToSubFolders,
-      hashToParentFolder: this.global.hashToParentFolder
-    }
-  }
-
-  async folderContent(hash){
-
   }
 
   async upload(folderIdOrPath){
@@ -352,6 +272,9 @@ class Handler{
       console.log(f)
       ret.push(await this.file(md5(f)))
     }
+
+    this.fillMissingHashes();
+
     return ret
   }
 
@@ -406,7 +329,7 @@ class Handler{
         if(path == fpath)
           return "/" + folderName
         else
-          return `/${folderName}/${path.substring(fpath.length + 1)}`
+          return `/${folderName}/${path.substring(fpath.length + 1).replace(/\\/g, "/")}`
       }
     }
     throw "Unknown real path: " + path

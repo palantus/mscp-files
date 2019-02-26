@@ -90,14 +90,6 @@
       ]
     },
     {
-      "name": "diagnostics",
-      "title": "Diagnostics",
-      "description": "",
-      "returntype": "object",
-      "namespace": "",
-      "args": []
-    },
-    {
       "name": "delete",
       "title": "Delete",
       "description": "",

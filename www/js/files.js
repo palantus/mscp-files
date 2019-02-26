@@ -157,6 +157,9 @@ class FolderView{
     this.element.find(".backbutton").prop("disabled",this.path.length == 1)
     this.element.find("span.folderpath").html(this.path.map((p) => p.name).join("/") || "/")
 
+    this.element.find(".newfoldercontainer").parent().toggle(this.path.length > 1)
+    this.element.find(".uploadcontainer").parent().toggle(this.path.length > 1)
+
     await this.refreshContent(folder);
   }
 
