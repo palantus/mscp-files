@@ -8,6 +8,7 @@ const md5File = require('md5-file/promise')
 const md5 = require('md5')
 const mime = require('mime-types')
 const { resolve } = require('path');
+const del = require('del');
 
 class Handler{
 
@@ -364,13 +365,13 @@ class Handler{
     let file = (await this.mscp.meta.find(`id:${id}`, true))[0]
 
     if(!file)
-      throw "Unknown file"
-
+      throw "Unknown file/folder"
 
     await this.mscp.meta.addTag(file.id, "deleted")
     let filename = this.virtualPathToReal(file.properties.path);
 
-    fs.unlink(filename, () => true)
+    console.log("Deleting: " + filename)
+    await del(filename, {force: true})
     return true;
   }
 

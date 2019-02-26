@@ -3,11 +3,12 @@
  "version": "1.0.0",
  "main": "main.js",
  "dependencies": {
+  "del": "^3.0.0",
   "guid": "*",
-  "moment": "*",
-  "mscp": "*",
-  "md5-file": "*",
   "md5": "*",
-  "mime-types": "*"
+  "md5-file": "*",
+  "mime-types": "*",
+  "moment": "*",
+  "mscp": "*"
  }
 }
