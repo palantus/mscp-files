@@ -21,6 +21,7 @@ class TypeHandler{
   async addNewExecute(e){
     let titleInput = e.parent().find("input[name=title]")
     await mscp.addFolder(this.folderView.folder.id, titleInput.val())
+    titleInput.val("")
     this.folderView.refreshContent()
     e.parents(".toolbarbutton").removeClass("open")
     typeInput.val("folder")
