@@ -9,6 +9,7 @@ const md5 = require('md5')
 const mime = require('mime-types')
 const { resolve } = require('path');
 const del = require('del');
+const request = require("request-promise-native")
 
 class Handler{
 
@@ -159,18 +160,42 @@ class Handler{
     }
   }
 
+  async tryExternalFileSources(hash){
+    if(this.global.setup.externalFileSources){
+      for(let source of this.global.setup.externalFileSources){
+        if(!source.exists || !source.download){
+          console.log("External source missing exists or download url")
+          continue;
+        }
+
+        let response = await request(source.exists.replace("$hash$", hash))
+        if(response){
+          let res = JSON.parse(response);
+          if(res.success == true){
+            this.request.res.redirect(source.download.replace("$hash$", hash))
+          }
+        }
+      }
+    }
+  }
+
   async download(hash){
     let file = (await this.mscp.meta.find(`id:"${hash}"|prop:"hash=${hash}"`, true))[0]
 
-    if(!file)
-      throw "Unknown file"
+    if(file){
+      let filename = this.virtualPathToReal(file.properties.path);
+      let isFile = await new Promise((r) => fs.lstat(filename, (err, stats) => r(stats.isFile(filename))))
+      if(!isFile)
+        throw `${hash} is a directory`
 
-    let filename = this.virtualPathToReal(file.properties.path);
-    let isFile = await new Promise((r) => fs.lstat(filename, (err, stats) => r(stats.isFile(filename))))
-    if(!isFile)
-      throw `${hash} is a directory`
-
-    return {name: file.properties.name, path: filename}
+      return {name: file.properties.name, path: filename}
+    } else {
+      let filename = await this.tryExternalFileSources(hash)
+      if(filename){
+        return {name: path.basename(filename), path: filename}
+      }
+    }
+    throw "Unknown file"
   }
 
   async raw(hash){

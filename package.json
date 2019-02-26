@@ -9,6 +9,8 @@
   "md5-file": "*",
   "mime-types": "*",
   "moment": "*",
-  "mscp": "*"
+  "mscp": "*",
+  "request": "^2.88.0",
+  "request-promise-native": "^1.0.7"
  }
 }
