@@ -172,7 +172,9 @@ class Handler{
         if(response){
           let res = JSON.parse(response);
           if(res.success == true && res.result == true){
-            this.request.res.redirect(source.download.replace("$hash$", hash))
+            let r = request(source.download.replace("$hash$", hash))
+            r.pipe(this.request.res)
+            await r
             return true;
           }
         }
