@@ -182,7 +182,7 @@ class Handler{
   }
 
   async download(hash){
-    let file = (await this.mscp.meta.find(`id:"${hash}"|prop:"hash=${hash}"`, true))[0]
+    let file = (await this.mscp.meta.find(`(id:"${hash}"|prop:"hash=${hash}") !tag:deleted`, true))[0]
 
     if(file){
       let filename = this.virtualPathToReal(file.properties.path);
@@ -201,7 +201,7 @@ class Handler{
   }
 
   async raw(hash){
-    let file = (await this.mscp.meta.find(`id:"${hash}"|prop:"hash=${hash}"`, true))[0]
+    let file = (await this.mscp.meta.find(`(id:"${hash}"|prop:"hash=${hash}") !tag:deleted`, true))[0]
 
     if(!file)
       throw "Unknown file"
