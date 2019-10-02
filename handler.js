@@ -19,7 +19,10 @@ class Handler{
     if(!this.global.setup.baseurl)
       this.global.setup.baseurl = "http://localhost"
 
-    this.reindex()
+    if(this.mscp.meta)
+      this.reindex()
+    else
+      console.log("ERROR: Please configure dependencies for metadata")
   }
 
   async reindex(){
@@ -34,6 +37,11 @@ class Handler{
     let folders = this.global.setup.folders || {}
     for(let folderName in folders){
       let folder = path.resolve(folders[folderName])
+
+      if (!fs.existsSync(folder)){
+        fs.mkdirSync(folder);
+      }
+
       await this.reindexFilesOfPath(folder)
 
       id = md5("/"+folderName)
