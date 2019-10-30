@@ -15,8 +15,9 @@ When downloading files using ''/api/download'', it can request files from extern
 "externalFileSources": [
   "https://drop.mydomain.com/api/download/$hash$"
   {
-    "exists": "https://drop.mydomain.com/api/exists/download/$hash$"
-    "download": "https://drop.mydomain.com/api/download/$hash$"
+    "exists": "https://drop.mydomain.com/api/exists/download/$hash$",
+    "download": "https://drop.mydomain.com/api/download/$hash$",
+    "file": "https://drop.mydomain.com/api/file/$hash$"
   }
 ]
 ```

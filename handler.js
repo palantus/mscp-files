@@ -19,10 +19,7 @@ class Handler{
     if(!this.global.setup.baseurl)
       this.global.setup.baseurl = "http://localhost"
 
-    if(this.mscp.meta)
-      this.reindex()
-    else
-      console.log("ERROR: Please configure dependencies for metadata")
+    this.reindex()
   }
 
   async reindex(){
@@ -168,11 +165,11 @@ class Handler{
     }
   }
 
-  async tryExternalFileSources(hash){
+  async tryExternalFileSources(hash, operation){
     if(this.global.setup.externalFileSources){
       for(let source of this.global.setup.externalFileSources){
-        if(!source.exists || !source.download){
-          console.log("External source missing exists or download url")
+        if(!source[operation] || !source.exists){
+          console.log(`External source missing ${operation} or exists url`)
           continue;
         }
 
@@ -180,9 +177,10 @@ class Handler{
         if(response){
           let res = JSON.parse(response);
           if(res.success == true && res.result == true){
-            let r = request(source.download.replace("$hash$", hash))
+            let r = request(source[operation].replace("$hash$", hash))
             r.pipe(this.request.res)
             await r
+            //this.request.res.redirect(source.download.replace("$hash$", hash))
             return true;
           }
         }
@@ -202,7 +200,7 @@ class Handler{
 
       return {name: file.properties.name, path: filename}
     } else {
-      let handled = await this.tryExternalFileSources(hash)
+      let handled = await this.tryExternalFileSources(hash, "download")
       if(handled){
         return;
       }
@@ -224,29 +222,18 @@ class Handler{
     this.request.res.sendFile(filename)
   }
 
-  async file(id){
-    /*
-    console.log(`Access key: ${this.request.req.mscp.accessKey}`)
+  async file(hash){
+    let file = (await this.mscp.meta.find(`(id:"${hash}"|prop:"hash=${hash}") !tag:deleted`, true))[0]
 
-    if(this.global.hashToFilename[id] === undefined)
-      throw "Unknown file"
-
-    let filename = this.global.hashToFilename[id];
-
-    return {
-      filename: filename,
-      id: id,
-      path: this.global.hashToPath[id],
-      md5: await md5File(this.virtualPathToReal(this.global.hashToPath[id])),
-      mime: mime.lookup(this.global.hashToFilename[id]),
-      links: {
-        raw: `${this.global.setup.baseurl}/api/raw/${id}/${filename}`,
-        download: `${this.global.setup.baseurl}/api/download/${id}/${filename}`,
-        self: `${this.global.setup.baseurl}/api/file/${id}/${filename}`
+    if(file){
+        return {filename: file.properties.name, hash: hash}
+    } else {
+      let handled = await this.tryExternalFileSources(hash, "file")
+      if(handled){
+       return;
       }
     }
-    */
-    return null;
+    throw "Unknown file"
   }
 
   async folder(hashOrPath){
