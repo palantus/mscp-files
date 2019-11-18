@@ -10,6 +10,7 @@ const mime = require('mime-types')
 const { resolve } = require('path');
 const del = require('del');
 const request = require("request-promise-native")
+const Entity = require("entitystorage")
 
 class Handler{
 
@@ -19,17 +20,21 @@ class Handler{
     if(!this.global.setup.baseurl)
       this.global.setup.baseurl = "http://localhost"
 
+    await Entity.init("./database")
+
     this.reindex()
   }
 
   async reindex(){
 
     let id = md5("/")
-    this.mscp.meta.setProperty(id, "name", "root")
-    this.mscp.meta.setProperty(id, "path", "/")
-    this.mscp.meta.setProperty(id, "parentpath", "")
-    this.mscp.meta.setProperty(id, "type", "folder")
-    this.mscp.meta.removeTag(id, "deleted")
+    Entity.findOrCreate(`prop:id=${id}`)
+          .prop("id", id)
+          .prop("name", "root")
+          .prop("path", "/")
+          .prop("parentpath", "")
+          .prop("type", "folder")
+          .removeTag("deleted")
 
     let folders = this.global.setup.folders || {}
     for(let folderName in folders){
@@ -42,11 +47,13 @@ class Handler{
       await this.reindexFilesOfPath(folder)
 
       id = md5("/"+folderName)
-      this.mscp.meta.setProperty(id, "name", folderName)
-      this.mscp.meta.setProperty(id, "path", "/"+folderName)
-      this.mscp.meta.setProperty(id, "parentpath", "/")
-      this.mscp.meta.setProperty(id, "type", "folder")
-      this.mscp.meta.removeTag(id, "deleted")
+      Entity.findOrCreate(`prop:id=${id}`)
+            .prop("id", id)
+            .prop("name", folderName)
+            .prop("path", "/"+folderName)
+            .prop("parentpath", "/")
+            .prop("type", "folder")
+            .removeTag("deleted")
       /*
       let files = await this.getAllFilesOfDir(folder)
       for(let file of files){
@@ -108,7 +115,7 @@ class Handler{
       let isDir = (await stat(fullPath)).isDirectory()
       let vPath = this.realPathToVirtual(fullPath)
       let id = md5(vPath)
-      let file = this.mscp.meta.find(`id:${id}`)
+      let file = Entity.find(`prop:id=${id}`)
 
       if(isDir){
         this.reindexFilesOfPath(fullPath)
@@ -117,11 +124,13 @@ class Handler{
           //TODO: Add folder metadata
         }
         //TODO: this code needs to only happen on unknown folders
-        this.mscp.meta.setProperty(id, "name", d)
-        this.mscp.meta.setProperty(id, "path", vPath)
-        this.mscp.meta.setProperty(id, "parentpath", vPathParent)
-        this.mscp.meta.setProperty(id, "type", "folder")
-        this.mscp.meta.removeTag(id, "deleted")
+        Entity.findOrCreate(`prop:id=${id}`)
+              .prop("id", id)
+              .prop("name", d)
+              .prop("path", vPath)
+              .prop("parentpath", vPathParent)
+              .prop("type", "folder")
+              .removeTag("deleted")
       } else {
         if(file){
           //TODO: check date, size etc.
@@ -129,11 +138,14 @@ class Handler{
           //TODO: Add file metadata
         }
         //TODO: this code needs to only happen on unknown files
-        this.mscp.meta.setProperty(id, "name", d)
-        this.mscp.meta.setProperty(id, "path", vPath)
-        this.mscp.meta.setProperty(id, "parentpath", vPathParent)
-        this.mscp.meta.setProperty(id, "type", "file")
-        this.mscp.meta.removeTag(id, "deleted")
+        Entity.findOrCreate(`prop:id=${id}`)
+              .prop("id", id)
+              .prop("name", d)
+              .prop("path", vPath)
+              .prop("parentpath", vPathParent)
+              .prop("type", "file")
+              .prop("hash", "")
+              .removeTag("deleted")
         console.log(vPath)
       }
     }
@@ -154,13 +166,13 @@ class Handler{
   }
 
   async fillMissingHashes(){
-    let files = (await this.mscp.meta.find(`prop:type=file prop:hash= !tag:deleted`, true))
+    let files = Entity.search(`prop:type=file prop:hash= !tag:deleted`);
     for(let file of files){
-        let filename = this.virtualPathToReal(file.properties.path);
+        let filename = this.virtualPathToReal(file.path);
         let hash = await md5File(filename)
         if(hash) {
-          this.mscp.meta.setProperty(file.id, "hash", hash)
-          console.log(`Filled hash of file: ` + file.properties.path)
+          file.prop("hash", hash)
+          console.log(`Filled hash of file: ` + file.path)
         }
     }
   }
@@ -190,15 +202,15 @@ class Handler{
   }
 
   async download(hash){
-    let file = (await this.mscp.meta.find(`(id:"${hash}"|prop:"hash=${hash}") !tag:deleted`, true))[0]
+    let file = Entity.find(`(prop:id="${hash}"|prop:"hash=${hash}") !tag:deleted`)
 
     if(file){
-      let filename = this.virtualPathToReal(file.properties.path);
+      let filename = this.virtualPathToReal(file.path);
       let isFile = await new Promise((r) => fs.lstat(filename, (err, stats) => r(stats.isFile(filename))))
       if(!isFile)
         throw `${hash} is a directory`
 
-      return {name: file.properties.name, path: filename}
+      return {name: file.name, path: filename}
     } else {
       let handled = await this.tryExternalFileSources(hash, "download")
       if(handled){
@@ -209,12 +221,12 @@ class Handler{
   }
 
   async raw(hash){
-    let file = (await this.mscp.meta.find(`(id:"${hash}"|prop:"hash=${hash}") !tag:deleted`, true))[0]
+    let file = Entity.find(`(prop:"id=${hash}"|prop:"hash=${hash}") !tag:deleted`)
 
     if(!file)
       throw "Unknown file"
 
-    let filename = this.virtualPathToReal(file.properties.path);
+    let filename = this.virtualPathToReal(file.path);
     let isFile = await new Promise((r) => fs.lstat(filename, (err, stats) => r(stats.isFile(filename))))
     if(!isFile)
       throw `${hash} is a directory`
@@ -223,10 +235,10 @@ class Handler{
   }
 
   async file(hash){
-    let file = (await this.mscp.meta.find(`(id:"${hash}"|prop:"hash=${hash}") !tag:deleted`, true))[0]
+    let file = Entity.find(`(prop:"id=${hash}"|prop:"hash=${hash}") !tag:deleted`)
 
     if(file){
-        return {filename: file.properties.name, hash: hash}
+        return {filename: file.name, hash: hash}
     } else {
       let handled = await this.tryExternalFileSources(hash, "file")
       if(handled){
@@ -239,33 +251,33 @@ class Handler{
   async folder(hashOrPath){
     let folder = null;
     if(hashOrPath.length == 32 && hashOrPath.indexOf("/") < 0){ //hash
-      folder = (await this.mscp.meta.find("id:"+hashOrPath, true))[0];
+      folder = Entity.find("prop:id="+hashOrPath, true);
     } else {
-      folder = (await this.mscp.meta.find('prop:path=' + hashOrPath, true))[0];
+      folder = Entity.find('prop:path=' + hashOrPath);
     }
 
     if(!folder)
       throw "Unknown folder: " + hashOrPath
 
-    let folderContent = await this.mscp.meta.find("prop:parentpath=" + folder.properties.path + " !tag:deleted", true)
+    let folderContent = Entity.search("prop:parentpath=" + folder.path + " !tag:deleted")
     for(let i = folderContent.length - 1; i >= 0; i--){
-      let filename = this.virtualPathToReal(folderContent[i].properties.path);
+      let filename = this.virtualPathToReal(folderContent[i].path);
       let exists = await new Promise(resolve => fs.stat(filename, (err, stat) => resolve(err == null ? true : false)))
       if(!exists){
-        this.mscp.meta.addTag(folderContent[i].id, "deleted")
+        folderContent[i].tag("deleted")
         folderContent.splice(i, 1)
       }
     }
 
     return {
-      name: folder.properties.name,
+      name: folder.name,
       id: folder.id,
-      parentPath: folder.properties.parentpath,
-      path: folder.properties.path,
-      content: folderContent,
+      parentPath: folder.parentpath,
+      path: folder.path,
+      content: folderContent.map(e => {return {id: e.id, tags: e.tags, properties: e.props, relations: e.rels}}),
       links: {
-        parent: folder.properties.parentpath ? `${this.global.setup.baseurl}/api/folder/?hash=${folder.properties.parentpath}` : null,
-        self: `${this.global.setup.baseurl}/api/folder/?path=${folder.properties.path}`
+        parent: folder.parentpath ? `${this.global.setup.baseurl}/api/folder/?hash=${folder.parentpath}` : null,
+        self: `${this.global.setup.baseurl}/api/folder/?path=${folder.path}`
       }
     }
   }
@@ -319,13 +331,13 @@ class Handler{
   }
 
   async delete(id){
-    let file = (await this.mscp.meta.find(`id:${id}`, true))[0]
+    let file = Entity.find(`prop:id=${id}`)
 
     if(!file)
       throw "Unknown file/folder"
 
-    await this.mscp.meta.addTag(file.id, "deleted")
-    let filename = this.virtualPathToReal(file.properties.path);
+    await file.tag("deleted")
+    let filename = this.virtualPathToReal(file.path);
 
     console.log("Deleting: " + filename)
     await del(filename, {force: true})

@@ -1,16 +1,17 @@
 {
  "name": "mscp-files",
- "version": "1.0.0",
+ "version": "1.0.1",
  "main": "main.js",
  "dependencies": {
   "del": "^3.0.0",
+  "entitystorage": "^1.0.11",
   "guid": "*",
   "md5": "*",
   "md5-file": "*",
-  "mime-types": "*",
+  "mime-types": "^2.1.25",
   "moment": "*",
-  "mscp": "*",
+  "mscp": "^1.2.97",
   "request": "^2.88.0",
-  "request-promise-native": "^1.0.7"
+  "request-promise-native": "^1.0.8"
  }
 }
