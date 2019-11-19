@@ -185,11 +185,19 @@ class Handler{
           continue;
         }
 
-        let response = await request(source.exists.replace("$hash$", hash))
+        let options = {
+          uri: source.exists.replace("$hash$", hash),
+          headers: {
+              'Origin': this.request.req.header("Origin")
+          }
+        }
+
+        let response = await request(options)
         if(response){
           let res = JSON.parse(response);
           if(res.success == true && res.result == true){
-            let r = request(source[operation].replace("$hash$", hash))
+            options.uri = source[operation].replace("$hash$", hash)
+            let r = request(options)
             r.pipe(this.request.res)
             await r
             //this.request.res.redirect(source.download.replace("$hash$", hash))
