@@ -202,7 +202,7 @@ class Handler{
   }
 
   async download(hash){
-    let file = Entity.find(`(prop:id="${hash}"|prop:"hash=${hash}") !tag:deleted`)
+    let file = Entity.find(`(prop:"id=${hash}"|prop:"hash=${hash}") !tag:deleted`)
 
     if(file){
       let filename = this.virtualPathToReal(file.path);
