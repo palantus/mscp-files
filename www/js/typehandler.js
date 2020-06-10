@@ -45,7 +45,7 @@ class TypeHandler{
     let type = this.types[item.properties.type]
     let open = type.open
     if(item.properties.ext){
-      open = type.types.find(t => t.extensions && t.extensions.indexOf(item.properties.ext) >= 0).open || open
+      open = (type.types.find(t => t.extensions && t.extensions.indexOf(item.properties.ext) >= 0)||{}).open || open
     }
     return open;
   }
