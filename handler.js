@@ -99,6 +99,7 @@ class Handler{
       */
     }
 
+    this.fillMissingHashes();
   }
 
   async reindexFilesOfPath(pathToIndex){
@@ -132,25 +133,25 @@ class Handler{
               .prop("type", "folder")
               .removeTag("deleted")
       } else {
+        console.log(file.tags)
         if(file){
           //TODO: check date, size etc.
-        } else {
-          //TODO: Add file metadata
-        }
-        //TODO: this code needs to only happen on unknown files
-        Entity.findOrCreate(`prop:id=${id}`)
-              .prop("id", id)
-              .prop("name", d)
-              .prop("path", vPath)
-              .prop("parentpath", vPathParent)
-              .prop("type", "file")
-              .prop("hash", "")
+          file.prop("ext", d.split(".").pop() || "")
               .removeTag("deleted")
-        console.log(vPath)
+        } else {
+          Entity.findOrCreate(`prop:id=${id}`)
+                .prop("id", id)
+                .prop("name", d)
+                .prop("path", vPath)
+                .prop("parentpath", vPathParent)
+                .prop("type", "file")
+                .prop("hash", "")
+                .prop("ext", d.split(".").pop() || "")
+                .removeTag("deleted")
+        }
       }
     }
 
-    this.fillMissingHashes();
     /*
     async function getFiles(dir) {
       const subdirs = await readdir(dir);
@@ -166,14 +167,30 @@ class Handler{
   }
 
   async fillMissingHashes(){
-    let files = Entity.search(`prop:type=file prop:hash= !tag:deleted`);
-    for(let file of files){
+    console.log("Filling hashes")
+    let file = Entity.find(`prop:type=file prop:hash= !tag:deleted`);
+    while(file){
+        if(!file.path){
+          file.tag("deleted")
+          continue;
+        }
         let filename = this.virtualPathToReal(file.path);
+        let exists = await new Promise(resolve => fs.stat(filename, (err, stat) => resolve(err == null ? true : false)))
+        if(!exists){
+          file.tag("deleted")
+          continue;
+        }
+
         let hash = await md5File(filename)
         if(hash) {
           file.prop("hash", hash)
-          console.log(`Filled hash of file: ` + file.path)
+          console.log(`Filled hash of file: ${file.path} with ${hash}`)
+        } else {
+          console.log(`Could not generate hash of file ${filename}. Hash generation aborted`)
+          break;
         }
+
+        file = Entity.find(`prop:type=file prop:hash= !tag:deleted`);
     }
   }
 
@@ -309,15 +326,14 @@ class Handler{
       }
     }
 
-    await this.reindex(); //TODO: nok for ineffektivt
+    await this.reindexFilesOfPath(realPath);
+    await this.fillMissingHashes();
 
     let ret = []
     for(let f of files){
       console.log(f)
       ret.push(await this.file(md5(f)))
     }
-
-    this.fillMissingHashes();
 
     return ret
   }
@@ -350,6 +366,10 @@ class Handler{
     console.log("Deleting: " + filename)
     await del(filename, {force: true})
     return true;
+  }
+
+  async filetypes(){
+    return this.global.setup.filetypes || []
   }
 
   virtualPathToReal(path){

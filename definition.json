@@ -129,6 +129,15 @@
           "description": ""
         }
       ]
+    },
+    {
+      "name": "filetypes",
+      "title": "File types",
+      "description": "",
+      "returntype": "array",
+      "namespace": "",
+      "default": "",
+      "args": []
     }
   ]
 }

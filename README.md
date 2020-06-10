@@ -21,3 +21,24 @@ When downloading files using ''/api/download'', it can request files from extern
   }
 ]
 ```
+
+## File types
+
+External sites handling file extensions. Add to ''setup.json'':
+
+```
+"filetypes": [
+  {
+    "extensions": ["ld2"],
+    "url": "https://mysite.com/apps/inspectfile/?hash=$hash$"
+  }
+]
+```
+
+The following variables are available:
+
+  - $id$: Internal Id
+  - $identifier$: The ''identifier'' property if filled. Otherwise internal Id.
+  - $accesstoken$: The access token
+  - $name$: The filename
+  - $hash$: The md5 hash of the file

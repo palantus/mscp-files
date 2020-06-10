@@ -34,6 +34,7 @@ class Entity{
         title: "File",
         icon: "/mscp/libs/img/document.png",
         allowShare: true,
+        types: await mscp.filetypes(),
         open: {
           type: "url",
           dest: "window",
@@ -102,18 +103,6 @@ class FolderView{
                   </form>
                 </span>
               </span>
-              <!--
-              <span class="toolbarbutton">
-                <button>Add existing</button>
-                <span class="addexistingcontainer dropdownmenu">
-                  <select name="type" value="folder" size="${Object.keys(this.typeHandler.types).length-1}">${this.typeHandler.typesSelectValuesNoFolder}</select>
-                  <input type="text" name="identifier" placeholder="Identifier"></input>
-                  <input type="text" name="title" placeholder="Title"></input>
-                  <div class="params"></div>
-                  <button>Add</button>
-                </span>
-              </span>
-              -->
 
               <span class="folderpath"></span>
             </div>

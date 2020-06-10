@@ -4,7 +4,7 @@
  "main": "main.js",
  "dependencies": {
   "del": "^3.0.0",
-  "entitystorage": "^1.0.11",
+  "entitystorage": "^1.0.23",
   "guid": "*",
   "md5": "*",
   "md5-file": "*",

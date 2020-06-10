@@ -41,16 +41,26 @@ class TypeHandler{
   }
   */
 
+  getOpen(item){
+    let type = this.types[item.properties.type]
+    let open = type.open
+    if(item.properties.ext){
+      open = type.types.find(t => t.extensions && t.extensions.indexOf(item.properties.ext) >= 0).open || open
+    }
+    return open;
+  }
+
   async openItem(item, e){
     e = e || {}
-    let type = this.types[item.properties.type]
-    switch(type.open.type){
+    let open = this.getOpen(item)
+
+    switch(open.type){
       case "url":
         let url = await this.getShareableLink(item, true)
 
-        if(type.open.dest === "window"){
-          let width = type.open.windowWidth || 520
-          let height = type.open.windowHeight || 570
+        if(open.dest === "window"){
+          let width = open.windowWidth || 520
+          let height = open.windowHeight || 570
           let left = Math.max(e.screenX - parseInt(width/2), 0)
           let top = Math.max(e.screenY - parseInt(height/2), 0)
           window.open(url, '_blank', `height=${height},width=${width},scrollbars=yes,status=no,left=${left},top=${top}`);
@@ -61,19 +71,20 @@ class TypeHandler{
   }
 
   async getShareableLink(item, writeAccess, permanentAccess){
-    let type = this.types[item.properties.type]
-    switch(type.open.type){
+    let open = this.getOpen(item)
+    switch(open.type){
       case "url":
 
         let accessToken = ""
-        if(type.open.includeAccessToken)
+        if(open.includeAccessToken)
           accessToken = await mscp.getEntityAccessToken(item.id, writeAccess, permanentAccess)
 
-        let url = type.open.url
+        let url = open.url
                     .replace("$id$", item.id)
                     .replace("$identifier$", item.properties.identifier || item.id)
                     .replace("$accesstoken$", accessToken)
                     .replace("$name$", item.properties.name)
+                    .replace("$hash$", item.properties.hash)
 
         return url;
     }
