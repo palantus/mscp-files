@@ -133,7 +133,6 @@ class Handler{
               .prop("type", "folder")
               .removeTag("deleted")
       } else {
-        console.log(file.tags)
         if(file){
           //TODO: check date, size etc.
           file.prop("ext", d.split(".").pop() || "")
