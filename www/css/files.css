@@ -56,16 +56,16 @@ div.folderview > div{position: relative;}
 li.folderitem{ height: 15px; padding: 3px;transition: background 0.2s linear; position: relative; user-select: none; cursor: pointer;}
 li.folderitem:hover, li.folderitem.selected{background: rgba(230, 230, 230, 0.5);}
 li.folderitem .itemname{cursor:pointer; margin-right: 5px; /*min-width: 200px;*/ display: inline-block; position: absolute; top: 0px; padding-top: 2px; padding-right: 5px;}
-li.folderitem .itemactions{left: 200px; position: absolute; background-color: inherit; padding-left: 10px; padding-right: 10px;}
+li.folderitem .itemactions{visibility: hidden; left: 200px; position: absolute; background-color: inherit; background: rgba(255, 255, 255, 0.9); border-radius: 3px; padding: 0px; padding-right: 3px;}
 li.folderitem .itemaction{ visibility: hidden;}
-li.folderitem .itemaction img{cursor:pointer;}
-li.folderitem:hover .itemaction, li.folderitem .itemaction.clicked, li.folderitem.selected .itemaction{visibility: visible; position:relative;}
+li.folderitem .itemaction img{cursor:pointer; padding: 0px; height: 15px; position: relative; top: 1px;}
+li.folderitem:hover .itemaction, li.folderitem:hover .itemactions, li.folderitem .itemaction.clicked, li.folderitem.selected .itemaction, li.folderitem.selected .itemactions{visibility: visible; position:relative;}
 
 li.folderitem .itemaction .dropdownmenu{display: none;}
 li.folderitem .itemaction.clicked .dropdownmenu{display: block;}
 
 ul.foldercontent{list-style-type: none; padding-left: 10px; padding-top: 5px; margin-top: 0px;}
-ul.foldercontent .folderitem img{height: 15px; padding-right: 5px;}
+ul.foldercontent .folderitem > img{height: 15px; padding-right: 5px;}
 
 
 /* Properties */
