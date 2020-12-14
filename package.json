@@ -8,7 +8,6 @@
   "guid": "*",
   "md5": "*",
   "md5-file": "*",
-  "md5-file-promise": "^1.0.2",
   "mime-types": "^2.1.25",
   "moment": "*",
   "mscp": "^1.2.97",
